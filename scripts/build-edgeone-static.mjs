@@ -44,3 +44,22 @@ function rewriteAssetPaths(dir) {
 }
 
 rewriteAssetPaths(outDir);
+
+const cssDir = join(edgeAssets, "static", "chunks");
+const htmlFiles = ["index.html", "404.html"].map((name) => join(outDir, name));
+
+if (existsSync(cssDir)) {
+  const css = readdirSync(cssDir)
+    .filter((name) => name.endsWith(".css"))
+    .map((name) => readFileSync(join(cssDir, name), "utf8"))
+    .join("\n")
+    .replaceAll("</style", "<\\/style");
+
+  for (const htmlFile of htmlFiles) {
+    if (!existsSync(htmlFile)) continue;
+    const original = readFileSync(htmlFile, "utf8");
+    if (original.includes("edgeone-inline-css")) continue;
+    const inlineStyle = `<style id="edgeone-inline-css">${css}</style>`;
+    writeFileSync(htmlFile, original.replace("</head>", `${inlineStyle}</head>`));
+  }
+}
