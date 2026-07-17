@@ -63,11 +63,13 @@ AI_MODEL=gpt-4.1-mini
 
 如果主要面向小红书、微信和国内手机用户，可以先部署到腾讯云 EdgeOne Pages。这个版本默认走纯前端基础规划，不需要 `AI_API_KEY`，也不会消耗模型额度；路线、预算、住宿区域、美食、打印 PDF、复制清单和高德地图链接都可以正常使用。
 
-推荐控制台配置：
+推荐控制台配置（国内试水静态版）：
 
-- 项目名：`xingzhi-travel`
+- 项目名：`xingzhi-travel-static`
+- 框架预设：`Other`
+- 根目录：`edgeone-static`
 - 安装命令：`npm install`
-- 构建命令：`npm run build:edgeone`
+- 构建命令：`npm run build`
 - 输出目录：`out`
 - Node.js：`22.11.0`
 

@@ -17,6 +17,7 @@
 /.next/
 /.vinext/
 /out/
+/edgeone-static/out/
 
 # misc
 .DS_Store
