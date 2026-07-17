@@ -4,7 +4,7 @@
 
 在线体验：[行知旅行](https://xingzhi-travel.chen8chen88.chatgpt.site/)
 
-如果你是从小红书、朋友圈或者攻略帖点进来的，可以先把它当成一个“出发前 10 分钟理清思路”的工具。它不替你下单，也不卖套餐，重点是帮你少刷一点重复攻略，少踩一点明显的坑。
+可以先把它当成一个“出发前 10 分钟理清思路”的工具。它不替你下单，也不卖套餐，重点是帮你少刷一点重复攻略，少踩一点明显的坑。
 
 ## 能做什么
 
@@ -49,7 +49,7 @@ npm run dev
 ```bash
 AI_BASE_URL=https://api.openai.com/v1
 AI_API_KEY=你的模型密钥
-AI_MODEL=gpt-4.1-mini
+AI_MODEL=gpt-5.5
 ```
 
 也可以替换为兼容 OpenAI 接口格式的模型服务。模型密钥只应该放在本地 `.env.local` 或 Cloudflare 环境变量里，不要提交到 GitHub。
