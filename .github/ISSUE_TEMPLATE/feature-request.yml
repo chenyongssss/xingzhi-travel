@@ -1,0 +1,17 @@
+name: 功能建议
+description: 告诉我这个个人旅行工具还能怎样更好用。
+title: "[功能建议] "
+labels: ["功能建议"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你遇到的问题
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你的建议
+    validations:
+      required: true

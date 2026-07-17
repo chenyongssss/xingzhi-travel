@@ -1,0 +1,26 @@
+name: 城市资料纠错
+description: 提交目的地、预约、交通或开放信息的更正建议。
+title: "[城市资料] "
+labels: ["城市资料"]
+body:
+  - type: input
+    id: destination
+    attributes:
+      label: 目的地
+      placeholder: 例如：成都
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: 需要更正的内容
+      placeholder: 请说明页面中的原内容与建议修改。
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 官方来源链接
+      placeholder: 仅填写景区、博物馆、交通部门等官方页面。
+    validations:
+      required: true
