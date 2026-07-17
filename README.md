@@ -4,9 +4,12 @@
 
 一个给自由行用户用的旅行规划工具。输入目的地、日期、人数、同行关系、预算和偏好，就能生成一份可打印、可复制、能打开地图的旅行单：路线、预算、住宿区域、美食、预约提醒和行前清单都放在一起。
 
-在线体验：[行知旅行](https://xingzhi-travel.chenyongsheng805.workers.dev/)
+在线体验：
 
-可以先把它当成一个“出发前 10 分钟理清思路”的工具。它不替你下单，也不卖套餐，重点是帮你少刷一点重复攻略，少踩一点明显的坑。
+- Cloudflare 备用版：[行知旅行](https://xingzhi-travel.chenyongsheng805.workers.dev/)
+- EdgeOne 国内试水版：部署完成后补充地址
+
+如果你是从小红书、朋友圈或者攻略帖点进来的，可以先把它当成一个“出发前 10 分钟理清思路”的工具。它不替你下单，也不卖套餐，重点是帮你少刷一点重复攻略，少踩一点明显的坑。
 
 ## 能做什么
 
@@ -51,10 +54,24 @@ npm run dev
 ```bash
 AI_BASE_URL=https://api.openai.com/v1
 AI_API_KEY=你的模型密钥
-AI_MODEL=gpt-5.5
+AI_MODEL=gpt-4.1-mini
 ```
 
 也可以替换为兼容 OpenAI 接口格式的模型服务。模型密钥只应该放在本地 `.env.local` 或 Cloudflare 环境变量里，不要提交到 GitHub。
+
+## EdgeOne 国内试水部署
+
+如果主要面向小红书、微信和国内手机用户，可以先部署到腾讯云 EdgeOne Pages。这个版本默认走纯前端基础规划，不需要 `AI_API_KEY`，也不会消耗模型额度；路线、预算、住宿区域、美食、打印 PDF、复制清单和高德地图链接都可以正常使用。
+
+推荐控制台配置：
+
+- 项目名：`xingzhi-travel`
+- 安装命令：`npm install`
+- 构建命令：`npm run build:edgeone`
+- 输出目录：`out`
+- Node.js：`22.11.0`
+
+也可以在 GitHub Secrets 中添加 `EDGEONE_API_TOKEN`，之后推送 `main` 分支时会自动执行 EdgeOne Pages 部署。
 
 ## Cloudflare 部署
 
@@ -74,6 +91,7 @@ AI_MODEL=gpt-5.5
 ```bash
 npm run dev      # 本地开发
 npm run build    # 构建检查
+npm run build:edgeone # EdgeOne 静态试水版构建
 npm test         # 构建并运行页面渲染测试
 npm run lint     # 代码检查
 ```

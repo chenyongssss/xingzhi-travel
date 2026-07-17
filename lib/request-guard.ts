@@ -13,5 +13,7 @@ export function withinRateLimit(key: string) {
 export function validTravelRequest(input: unknown): input is TravelRequest {
   if (!input || typeof input !== "object") return false;
   const value = input as Partial<TravelRequest>;
-  return typeof value.destination === "string" && value.destination.trim().length > 0 && typeof value.origin === "string" && typeof value.startDate === "string" && Number.isInteger(value.days) && value.days >= 2 && value.days <= 10 && Number.isInteger(value.travelers) && value.travelers >= 1 && value.travelers <= 8 && Array.isArray(value.interests) && typeof value.party === "string" && typeof value.transport === "string" && typeof value.roomMode === "string" && typeof value.diet === "string" && typeof value.pace === "string";
+  const days = value.days;
+  const travelers = value.travelers;
+  return typeof value.destination === "string" && value.destination.trim().length > 0 && typeof value.origin === "string" && typeof value.startDate === "string" && typeof days === "number" && Number.isInteger(days) && days >= 2 && days <= 10 && typeof travelers === "number" && Number.isInteger(travelers) && travelers >= 1 && travelers <= 8 && Array.isArray(value.interests) && typeof value.party === "string" && typeof value.transport === "string" && typeof value.roomMode === "string" && typeof value.diet === "string" && typeof value.pace === "string";
 }

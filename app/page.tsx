@@ -7,6 +7,7 @@ const interests = ["在地美食", "经典景点", "博物馆人文", "自然风
 const today = new Date().toISOString().slice(0, 10);
 const issuesUrl = process.env.NEXT_PUBLIC_GITHUB_ISSUES_URL || "#feedback";
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+const staticPlanner = process.env.NEXT_PUBLIC_STATIC_PLANNER === "1";
 type PlanResponse = { itinerary: Itinerary; mode: "ai" | "fallback" | "limit"; sourceStatus?: "verified" | "basic" };
 
 export default function Page() {
@@ -32,6 +33,14 @@ export default function Page() {
 
   async function generate(replaceDay?: number) {
     setLoading(true); setNotice(replaceDay ? `正在重排第 ${replaceDay} 天，其他日程尽量不动。` : "正在把路线、预算和预约提醒拼成一份旅行单。");
+    if (staticPlanner) {
+      const next = buildItinerary(input);
+      const itineraryForStatic = replaceDay && itinerary?.days.length === input.days ? { ...next, days: next.days.map((day, index) => index === replaceDay - 1 ? day : itinerary.days[index] ?? day) } : next;
+      setItinerary(itineraryForStatic);
+      setNotice("国内试水版已生成基础旅行单：路线、预算、吃住和提醒都可直接参考。 ");
+      setLoading(false); setTimeout(() => document.getElementById("plan")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+      return;
+    }
     try {
       const response = await fetch("/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...input, turnstileToken, replaceDay, previousItinerary: replaceDay ? itinerary : undefined }) });
       if (!response.ok) throw new Error("plan request failed");

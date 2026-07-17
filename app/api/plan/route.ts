@@ -1,6 +1,12 @@
 import { clientKey, validTravelRequest, withinRateLimit } from "@/lib/request-guard";
 import { buildItinerary, normalizeItinerary, type Itinerary, type TravelRequest } from "@/lib/travel";
 
+type PlanRequest = TravelRequest & {
+  turnstileToken?: string;
+  replaceDay?: number;
+  previousItinerary?: Itinerary;
+};
+
 async function verifyTurnstile(token: unknown, remoteIp: string | null) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) return true;
@@ -14,11 +20,11 @@ async function verifyTurnstile(token: unknown, remoteIp: string | null) {
 export async function POST(request: Request) {
   const raw = await request.json().catch(() => null);
   if (!validTravelRequest(raw)) return Response.json({ error: "请检查目的地、天数与同行人数后重试。" }, { status: 400 });
-  if (!await verifyTurnstile(raw.turnstileToken, request.headers.get("cf-connecting-ip"))) return Response.json({ error: "安全校验未完成，请刷新后重试。" }, { status: 403 });
-  const input = raw as TravelRequest;
+  const input = raw as PlanRequest;
+  if (!await verifyTurnstile(input.turnstileToken, request.headers.get("cf-connecting-ip"))) return Response.json({ error: "安全校验未完成，请刷新后重试。" }, { status: 403 });
   const fallback = normalizeItinerary(buildItinerary(input));
-  const previous = raw.previousItinerary as Itinerary | undefined;
-  const replaceDay = Number.isInteger(raw.replaceDay) ? raw.replaceDay as number : null;
+  const previous = input.previousItinerary;
+  const replaceDay = Number.isInteger(input.replaceDay) ? input.replaceDay : null;
   const keepOtherDays = (next: Itinerary) => replaceDay && previous?.days?.length === input.days ? { ...next, days: next.days.map((day, index) => index === replaceDay - 1 ? day : previous.days[index] ?? day) } : next;
   const aiAllowed = request.headers.get("x-xingzhi-ai-allowed") !== "0" && withinRateLimit(clientKey(request));
   const baseUrl = process.env.AI_BASE_URL; const apiKey = process.env.AI_API_KEY; const model = process.env.AI_MODEL;
