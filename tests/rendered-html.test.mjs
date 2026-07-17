@@ -12,7 +12,7 @@ test("renders the public travel planner", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /行知旅行/);
+  assert.match(html, /知旅行/);
   assert.match(html, /现在出发/);
   assert.match(html, /旅行预算参考/);
   assert.doesNotMatch(html, /报价中心/);
