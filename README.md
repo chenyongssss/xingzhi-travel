@@ -6,8 +6,8 @@
 
 在线体验：
 
-- Cloudflare 备用版：[行知旅行](https://xingzhi-travel.chenyongsheng805.workers.dev/)
-- EdgeOne 国内试水版：部署完成后补充地址
+- EdgeOne 正式访问地址：部署完成后填写
+- 当前可验证页面：[行知旅行静态版](https://chenyongssss.github.io/xingzhi-travel-edgeone-static/)
 
 如果你是从小红书、朋友圈或者攻略帖点进来的，可以先把它当成一个“出发前 10 分钟理清思路”的工具。它不替你下单，也不卖套餐，重点是帮你少刷一点重复攻略，少踩一点明显的坑。
 
@@ -26,7 +26,7 @@
 - 第一次去某个城市，不想从零开始做攻略的人。
 - 情侣、朋友、亲子、4-6 人小团自由行。
 - 想先看大致路线和预算，再去官方渠道核验门票、交通和开放时间的人。
-- 想自己部署一个旅行规划工具，并接入自己 AI Key 的开发者。
+- 想自己部署一个旅行规划工具，并接入自己模型服务的开发者。
 
 ## 公开版边界
 
@@ -34,7 +34,7 @@
 - 不销售酒店、门票、套餐或当地服务。
 - 不抓取、转载或汇总小红书、抖音、携程、去哪儿等第三方平台正文和价格。
 - 页面里的预算不是实时库存价，也不代表一定可以买到；出发前请通过景区、博物馆、交通部门等官方页面再次核验。
-- 默认不需要配置 AI Key，也不会消耗作者的模型额度；开启 AI 深度定制需要部署者自己配置环境变量。
+- 默认可使用本地规则生成基础方案；开启 AI 深度定制时，部署者需要自行配置模型服务环境变量。
 
 ## 本地运行
 
@@ -57,43 +57,68 @@ AI_API_KEY=你的模型密钥
 AI_MODEL=gpt-4.1-mini
 ```
 
-也可以替换为兼容 OpenAI 接口格式的模型服务。模型密钥只应该放在本地 `.env.local` 或 Cloudflare 环境变量里，不要提交到 GitHub。
+也可以替换为兼容 OpenAI 接口格式的模型服务。模型密钥只应该放在本地 `.env.local`、EdgeOne 环境变量或 GitHub Secrets 中，不要提交到 GitHub。
 
-## EdgeOne 国内试水部署
+## EdgeOne 部署主线
 
-如果主要面向小红书、微信和国内手机用户，可以先部署到腾讯云 EdgeOne Pages。这个版本默认走纯前端基础规划，不需要 `AI_API_KEY`，也不会消耗模型额度；路线、预算、住宿区域、美食、打印 PDF、复制清单和高德地图链接都可以正常使用。
+如果主要面向小红书、微信和国内手机用户，推荐优先部署到腾讯云 EdgeOne Pages。当前公开页面可以先走纯前端规则生成，路线、预算、住宿区域、美食、打印 PDF、复制清单和高德地图链接都可以正常使用。
 
-推荐控制台配置（国内试水静态版）：
+### 方式一：控制台静态部署
 
-- 项目名：`xingzhi-travel-static`
+推荐先部署专用静态仓库：
+
+- 仓库：`chenyongssss/xingzhi-travel-edgeone-static`
+- 项目名：`xingzhi-travel`
 - 框架预设：`Other`
-- 根目录：`edgeone-static`
-- 安装命令：`npm install`
-- 构建命令：`npm run build`
-- 输出目录：`out`
-- Node.js：`22.11.0`
+- 根目录：`./`
+- 安装命令：留空；如控制台必填，使用 `echo skip`
+- 构建命令：留空；如控制台必填，使用 `echo skip`
+- 输出目录：`./`
 
-也可以在 GitHub Secrets 中添加 `EDGEONE_API_TOKEN`，之后推送 `main` 分支时会自动执行 EdgeOne Pages 部署。
+### 方式二：GitHub Actions + EdgeOne Token
 
-## Cloudflare 部署
+如果你希望后续一键部署，在 `chenyongssss/xingzhi-travel-edgeone-static` 仓库中添加 GitHub Secret：
 
-项目推荐部署到 Cloudflare Pages/Workers，这样可以保留服务端 AI 接口，并把密钥放在 Cloudflare 环境变量中。
+```text
+EDGEONE_API_TOKEN=你的 EdgeOne API Token
+```
 
-1. Fork 或 clone 本仓库。
-2. 在 Cloudflare 创建 Pages/Workers 项目，连接 GitHub 仓库的 `main` 分支。
-3. 在 GitHub Secrets 中配置 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`。
-4. 如需 AI，前往 Cloudflare 环境变量配置 `AI_BASE_URL`、`AI_API_KEY`、`AI_MODEL`。
-5. 可选：配置 Turnstile 与 `RATE_LIMIT` KV Namespace，减少公开站点被刷接口。
-6. 设置 `NEXT_PUBLIC_GITHUB_ISSUES_URL` 为本仓库反馈入口，例如 `https://github.com/chenyongssss/xingzhi-travel/issues/new/choose`。
+然后进入：
 
-默认无 AI Key 也可以部署，公开访问时会走本地规则方案，不会产生模型费用。
+```text
+Actions → Deploy EdgeOne Static → Run workflow
+```
+
+工作流会执行：
+
+```bash
+npx edgeone pages deploy ./ -n xingzhi-travel -t "$EDGEONE_API_TOKEN" -e production
+```
+
+### EdgeOne + AI 深度定制
+
+如果要启用 AI 深度定制，需要部署可运行服务端接口的版本，并在平台环境变量中配置：
+
+```text
+AI_BASE_URL=https://api.openai.com/v1
+AI_API_KEY=你的模型密钥
+AI_MODEL=gpt-4.1-mini
+```
+
+建议链路：
+
+1. 先用静态版上线验证访问、点击和生成体验。
+2. 用户反馈稳定后，创建支持 Functions/服务端接口的 EdgeOne Pages 项目。
+3. 在 EdgeOne 项目环境变量中添加 `AI_BASE_URL`、`AI_API_KEY`、`AI_MODEL`。
+4. 保持模型密钥只存在平台环境变量或 GitHub Secrets，不写入代码、不提交仓库。
+5. 接口异常或额度不足时，页面继续回退到本地规则方案，保证用户仍能生成基础行程。
 
 ## 常用命令
 
 ```bash
 npm run dev      # 本地开发
 npm run build    # 构建检查
-npm run build:edgeone # EdgeOne 静态试水版构建
+npm run build:edgeone # EdgeOne 静态版构建
 npm test         # 构建并运行页面渲染测试
 npm run lint     # 代码检查
 ```
