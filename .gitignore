@@ -18,6 +18,12 @@
 /.vinext/
 /out/
 /edgeone-static/out/
+/edgeone-static-check/
+/edgeone-upload/
+edgeone-upload-*.zip
+/edgeone-static/README.md
+/edgeone-static/deploy-edgeone.yml
+/edgeone-static/edgeone.json
 
 # misc
 .DS_Store
