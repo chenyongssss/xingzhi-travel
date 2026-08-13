@@ -66,9 +66,10 @@ AI_MODEL=gpt-4.1-mini
 ### 发布前检查清单
 
 1. GitHub Actions 配置 `EDGEONE_API_TOKEN`；工作流只上传静态构建目录 `out`，不会上传仓库源码或本地环境文件。
-2. 在 EdgeOne 项目中配置可长期使用的自定义域名；默认预览地址只适合短时核验，不适合公开分发。
-3. 用手机浏览器打开正式地址，生成一次旅行单，并确认高德地图、复制清单、打印／保存 PDF 都可用。
-4. 推送前执行 `npm test` 与 `npm run build:edgeone`；确认 `.env.local`、`.wrangler` 和临时压缩包未被 Git 跟踪。
+2. 自动上传版使用独立的 EdgeOne 项目 `xingzhi-travel-public`，避免与控制台已连接 GitHub 的同名项目冲突。
+3. 在 EdgeOne 项目中配置可长期使用的自定义域名；默认预览地址只适合短时核验，不适合公开分发。
+4. 用手机浏览器打开正式地址，生成一次旅行单，并确认高德地图、复制清单、打印／保存 PDF 都可用。
+5. 推送前执行 `npm test` 与 `npm run build:edgeone`；确认 `.env.local`、`.wrangler` 和临时压缩包未被 Git 跟踪。
 
 ### 方式一：控制台静态部署
 
