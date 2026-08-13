@@ -23,10 +23,12 @@ jobs:
       - run: npm test
       - name: Build EdgeOne static trial
         if: env.HAS_EDGEONE_SECRET == 'true'
-        run: npm run build:edgeone
+        run: |
+          npm run build:edgeone
+          node --test tests/edgeone-static.test.mjs
       - name: Deploy to EdgeOne Pages
         if: env.HAS_EDGEONE_SECRET == 'true'
-        run: npx edgeone pages deploy -n xingzhi-travel -t "$EDGEONE_API_TOKEN" -e production
+        run: npx edgeone pages deploy out -n xingzhi-travel -t "$EDGEONE_API_TOKEN" -e production
         env:
           EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
       - name: Deploy to Cloudflare
